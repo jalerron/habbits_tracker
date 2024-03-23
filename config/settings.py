@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'django_celery_beat',
 
     'users',
-    'habbits',
+    'habits',
 ]
 
 MIDDLEWARE = [
@@ -89,7 +89,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'habbits_tracker',
+        'NAME': 'habits_tracker',
         'USER': os.getenv('DB_USER'),
         'HOST': 'localhost',
         'PORT': '5432',
