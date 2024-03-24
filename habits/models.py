@@ -1,5 +1,6 @@
 from django.db import models
 
+from config import settings
 from users.models import User
 
 NULLABLE = {"blank": True, "null": True}
@@ -7,7 +8,7 @@ NULLABLE = {"blank": True, "null": True}
 
 class Habits(models.Model):
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="пользователь")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='пользователь', **NULLABLE)
     place = models.CharField(max_length=100, verbose_name="место", **NULLABLE)
     time = models.TimeField(default='12:00:00', verbose_name='время выполнения')
     action = models.CharField(max_length=150, verbose_name="действие")
