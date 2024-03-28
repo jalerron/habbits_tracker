@@ -10,10 +10,12 @@ WEB приложения трекер привычек
    2. Необходимо содать файл .env с параметрами программы, за основу можно взять файл .env_example
 
    3. Примените миграции:
-      * python manage.py migrate
+      * python manage.py migrate - Windows
+      * python3 manage.py migrate - Linux
 
    4. Запустите сервер:
-      * python manage.py runserver
+      * python manage.py runserver -Windows
+      * python3 manage.py runserver - Linux
 
    5. Запустите Celery для обработки отложенных задач:
       * celery -A config worker --pool=solo -l INFO
