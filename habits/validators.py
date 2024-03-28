@@ -18,9 +18,9 @@ class HabitValidatorTimeForWork:
         self.filed = field
 
     def __call__(self, value):
-        time_to_work = value.get(self.filed)
-
-        if time_to_work > 120:
+        duration = value.get(self.filed)
+        print(type(duration))
+        if int(duration) > 120:
             raise ValueError('Время выполнения может быть не более 120 секунд')
 
 
@@ -31,7 +31,6 @@ class HabitValidatorRelated:
         self.field_related = field_related
 
     def __call__(self, value):
-        is_nice = value.get(self.field_nice)
         is_related = value.get(self.field_related)
 
         if is_related and not is_related.is_nice:
@@ -60,5 +59,5 @@ class HabitsValidatorRule:
     def __call__(self, value):
         field_periodicity = value.get(self.field)
 
-        if field_periodicity > 7:
+        if int(field_periodicity) > 7:
             raise ValueError('Нельзя выполнять привычку реже, чем 1 раз в 7 дней')

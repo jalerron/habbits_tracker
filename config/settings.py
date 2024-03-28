@@ -31,7 +31,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -47,6 +46,7 @@ INSTALLED_APPS = [
     'django_filters',
     'drf_yasg',
     'django_celery_beat',
+    'corsheaders',
 
     'users',
     'habits',
@@ -60,6 +60,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -82,7 +84,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -96,7 +97,6 @@ DATABASES = {
         'PASSWORD': os.getenv('DB_PASSWORD')
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -116,7 +116,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -128,7 +127,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
@@ -138,7 +136,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 
 AUTH_USER_MODEL = 'users.User'
 
@@ -151,7 +148,6 @@ REST_FRAMEWORK = {
     ]
 }
 
-
 # Email settings
 EMAIL_HOST = 'smtp.mail.ru'
 EMAIL_PORT = 465
@@ -163,6 +159,9 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 SERVER_EMAIL = EMAIL_HOST_USER
 EMAIL_ADMIN = EMAIL_HOST_USER
 
+# Telegram settings
+TELEGRAM_URL = os.getenv('TELEGRAM_URL')
+TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 
 # Настройки для Celery
 CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
@@ -171,11 +170,22 @@ CELERY_TIMEZONE = os.getenv('CELERY_TIMEZONE')
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
-
 # Настройки для Celery
 CELERY_BEAT_SCHEDULE = {
     'task-name': {
-        'task': 'materials.tasks.check_last_login',  # Путь к задаче
+        'task': 'habits.tasks.habits_scheduler',  # Путь к задаче
         'schedule': timedelta(seconds=5),  # Расписание выполнения задачи (например, каждые 10 минут)
     },
 }
+
+# Djanfo cors header
+# https://pypi.org/project/django-cors-headers/
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:8000',
+    ]
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8000',
+    ]
+
+CORS_ALLOW_ALL_ORIGINS = False

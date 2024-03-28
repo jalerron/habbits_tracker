@@ -7,7 +7,9 @@ NULLABLE = {'blank': True, 'null': True}
 class User(AbstractUser):
 
     email = models.EmailField(unique=True, verbose_name='почта')
-    full_name = models.CharField(max_length=150, verbose_name='полное имя', **NULLABLE)
+    full_name = models.CharField(max_length=150, verbose_name='полное имя',
+                                 **NULLABLE)
+    chat_id = models.CharField(max_length=150, verbose_name='id чат телеграма')
 
     username = None
 
@@ -20,4 +22,3 @@ class User(AbstractUser):
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
-

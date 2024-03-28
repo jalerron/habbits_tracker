@@ -13,6 +13,6 @@ class HabitSerializer(serializers.ModelSerializer):
             HabitValidatorTimeForWork(field='duration'),
             HabitValidatorRelated(field_nice='is_nice', field_related='related_habits'),
             HabitValidatorNiceReward(field_nice='is_nice', field_related='related_habits'),
-            HabitsValidatorRule(field='periodicity')
+            # HabitsValidatorRule(field='periodicity')
         ]
         fields = '__all__'
