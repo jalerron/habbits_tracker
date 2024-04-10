@@ -1,0 +1,8 @@
+# Dockerfile_postgres
+
+# Use the official PostgreSQL image as base
+FROM postgres:latest
+
+ENV POSTGRES_DB habits_tracker
+
+EXPOSE  5432

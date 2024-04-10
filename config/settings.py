@@ -90,10 +90,10 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'habits_tracker',
+        'NAME': os.getenv('DB_NAME'),
         'USER': os.getenv('DB_USER'),
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'HOST': 'postgres',
+        'PORTS': 5432,
         'PASSWORD': os.getenv('DB_PASSWORD')
     }
 }
@@ -182,10 +182,12 @@ CELERY_BEAT_SCHEDULE = {
 # https://pypi.org/project/django-cors-headers/
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:8000',
-    ]
+    'http://0.0.0.0:8000',
+]
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
-    ]
+    'http://0.0.0.0:8000',
+]
 
 CORS_ALLOW_ALL_ORIGINS = False
