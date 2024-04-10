@@ -1,0 +1,7 @@
+# Dockerfile_redis
+
+# Use the official Redis image as base
+FROM redis:latest
+
+# Expose Redis port
+EXPOSE 6379

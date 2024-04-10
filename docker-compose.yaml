@@ -1,0 +1,73 @@
+version: '3'
+
+services:
+  postgres:
+    container_name: postgres
+    build:
+      context: .
+      dockerfile: Dockerfile_postgres
+    restart: on-failure
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_NAME: ${DB_NAME}
+#    command: sh -c "psql -h localhost -U postgres && create database '${DB_NAME}';"
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  django:
+    restart: on-failure
+    depends_on:
+      postgres:
+        condition: service_healthy
+    build:
+      context: .
+      dockerfile: Dockerfile_django
+    env_file:
+      - .env
+    ports:
+      - '8000:8000'
+    command: sh -c "python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"
+
+  redis:
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: Dockerfile_redis
+    ports:
+      - '6380:6379'
+
+  celery:
+    restart: on-failure
+    depends_on:
+      redis:
+        condition: service_healthy
+    build:
+      context: .
+      dockerfile: Dockerfile_celery
+    tty: true
+    command: sh -c "celery -A config worker -l INFO"
+
+  celery_beat:
+    restart: on-failure
+    depends_on:
+      redis:
+        condition: service_healthy
+    build:
+      context: .
+      dockerfile: Dockerfile_celerybeat
+    tty: true
+    command: sh -c "sleep 5 && celery -A config beat -l INFO -S django"
+
+
+volumes:
+  pg_data:
