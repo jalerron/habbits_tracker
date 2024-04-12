@@ -1,14 +1,10 @@
-version: '3'
+version: '3.8'
 
 services:
   postgres:
     container_name: postgres
-    build:
-      context: .
-      dockerfile: Dockerfile_postgres
+    image: postgres:16.2-alpine3.19
     restart: on-failure
-    env_file:
-      - .env
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -17,7 +13,7 @@ services:
     ports:
       - "5433:5432"
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      test: pg_isready -U ${DB_USER} -d ${DB_NAME}
       interval: 10s
       timeout: 5s
       retries: 5
@@ -29,9 +25,7 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    build:
-      context: .
-      dockerfile: Dockerfile_django
+    build: .
     env_file:
       - .env
     ports:
@@ -40,20 +34,25 @@ services:
 
   redis:
     restart: on-failure
-    build:
-      context: .
-      dockerfile: Dockerfile_redis
+    image: redis:7.2.4-alpine
     ports:
       - '6380:6379'
+    env_file:
+      - .env
+    healthcheck:
+      test: redis-cli ping
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   celery:
     restart: on-failure
     depends_on:
       redis:
         condition: service_healthy
-    build:
-      context: .
-      dockerfile: Dockerfile_celery
+    build: .
+    env_file:
+      - .env
     tty: true
     command: sh -c "celery -A config worker -l INFO"
 
@@ -62,11 +61,13 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-    build:
-      context: .
-      dockerfile: Dockerfile_celerybeat
+      django:
+        condition: service_started
+    build: .
+    env_file:
+      - .env
     tty: true
-    command: sh -c "sleep 5 && celery -A config beat -l INFO -S django"
+    command: sh -c "celery -A config beat -l INFO -S django"
 
 
 volumes:
